@@ -13,10 +13,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.net.URL
 
-
+//Tela de detalhes do episodio
 class EpisodeDetailActivity : AppCompatActivity() {
 
-    private lateinit var binding : ActivityEpisodeDetailBinding
+    private lateinit var binding: ActivityEpisodeDetailBinding
     private var coroutineScope = CoroutineScope(Dispatchers.Main.immediate)
     private lateinit var bmp: Bitmap
 
@@ -34,8 +34,9 @@ class EpisodeDetailActivity : AppCompatActivity() {
         binding.txtTitulo.text = tituloPoscast
         binding.txtDescricaoPodcast.text = descricaoPoscast
 
+        //buscar imagem
         coroutineScope.launch {
-            withContext(Dispatchers.Default) {
+            withContext(Dispatchers.IO) {
                 val url = URL(imagemPoscast)
                 bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream())
             }

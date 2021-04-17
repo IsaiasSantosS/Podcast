@@ -1,21 +1,20 @@
 package br.ufpe.cin.android.podcast
 
 
-import android.content.Context
 import android.view.LayoutInflater
-
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.cardview.widget.CardView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import br.ufpe.cin.android.podcast.data.Episodio
 import br.ufpe.cin.android.podcast.databinding.ItemfeedBinding
-import com.prof.rssparser.Article
 
+//Classe para carregar os dados para o recyclerView
 class EpisodesAdapter(
-    private val articles: MutableList<Article>,
     var inflater: LayoutInflater,
-    val clickListener: (Article) -> Unit
-) : RecyclerView.Adapter<EpisodesAdapter.ViewHolder>() {
+    val clickListener: (Episodio) -> Unit
+) :
+    ListAdapter<Episodio, EpisodesAdapter.ViewHolder>(EpisodioDiffer) {
 
     inner class ViewHolder(private val binding: ItemfeedBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -23,10 +22,10 @@ class EpisodesAdapter(
         var datePublish = binding.itemDate
         var viewCard = binding.root
 
-        fun bind(article: Article, clickListener: (Article) -> Unit) {
-            title.text = article.title.toString().subSequence(0, 25)
-            datePublish.text = article.pubDate
-            viewCard.setOnClickListener { clickListener(article) }
+        fun bind(episodio: Episodio, clickListener: (Episodio) -> Unit) {
+            title.text = episodio.titulo
+            datePublish.text = episodio.dataPublicacao
+            viewCard.setOnClickListener { clickListener(episodio) }
         }
 
     }
@@ -37,10 +36,17 @@ class EpisodesAdapter(
     }
 
     override fun onBindViewHolder(holder: EpisodesAdapter.ViewHolder, position: Int) {
-        holder.bind(articles[position], clickListener)
+        holder.bind(getItem(position), clickListener)
     }
 
-    override fun getItemCount(): Int {
-        return articles.count()
+    private object EpisodioDiffer : DiffUtil.ItemCallback<Episodio>() {
+        override fun areItemsTheSame(oldItem: Episodio, newItem: Episodio): Boolean {
+            return oldItem === newItem
+        }
+
+        override fun areContentsTheSame(oldItem: Episodio, newItem: Episodio): Boolean {
+            return oldItem === newItem
+        }
+
     }
 }
