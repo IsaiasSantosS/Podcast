@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import br.ufpe.cin.android.podcast.databinding.ActivityEpisodeDetailBinding
 import kotlinx.coroutines.CoroutineScope
@@ -36,11 +37,20 @@ class EpisodeDetailActivity : AppCompatActivity() {
 
         //buscar imagem
         coroutineScope.launch {
-            withContext(Dispatchers.IO) {
-                val url = URL(imagemPoscast)
-                bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream())
+            try {
+                withContext(Dispatchers.IO) {
+                    val url = URL(imagemPoscast)
+                    bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream())
+                }
+                binding.imgPodcast.setImageBitmap(bmp)
+            } catch (cause: Throwable) {
+                Toast.makeText(
+                    this@EpisodeDetailActivity,
+                    "Erro ao buscar imagem",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
-            binding.imgPodcast.setImageBitmap(bmp)
+
         }
 
         binding.btnLinkPodcast.setOnClickListener {

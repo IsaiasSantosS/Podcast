@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -116,21 +117,30 @@ class MainActivity : AppCompatActivity() {
     private fun salvarListaPodcast(url: String) {
         viewModelEpisode.remover()
         coroutineScope.launch {
-            withContext(Dispatchers.Default) {
-                var channel = parser.getChannel(url)
-                channel.articles.forEach {
-                    viewModelEpisode.inserir(
-                        Episodio(
-                            it.link.toString(),
-                            it.title.toString(),
-                            it.description.toString(),
-                            it.sourceUrl.toString(),
-                            it.pubDate.toString(),
-                            it.image.toString()
+            try {
+                withContext(Dispatchers.Default) {
+                    var channel = parser.getChannel(url)
+                    channel.articles.forEach {
+                        viewModelEpisode.inserir(
+                            Episodio(
+                                it.link.toString(),
+                                it.title.toString(),
+                                it.description.toString(),
+                                it.sourceUrl.toString(),
+                                it.pubDate.toString(),
+                                it.image.toString()
+                            )
                         )
-                    )
+                    }
                 }
+            }catch (cause: Throwable){
+                Toast.makeText(
+                    this@MainActivity,
+                    "Erro ao carregar PodCast, Verifique sua conexão de rede",
+                    Toast.LENGTH_LONG
+                ).show()
             }
+
         }
     }
 
